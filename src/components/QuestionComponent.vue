@@ -1,14 +1,14 @@
 <template>
-  <transition name="fade">
-    <div class="question-popup" v-if="question">
-      <h1>{{ question }}</h1>
-      <div class="answers">
-        <div v-for="(answer, index) in answers" :key="index" class="answer">
-          <img :src="answer.image" @click="checkAnswer(answer)" />
-        </div>
+  <div class="question-popup">
+    <div class="question-container">
+      <h1 v-if="question">{{ question }}</h1>
+    </div>
+    <div class="answers" v-if="question">
+      <div v-for="(answer, index) in answers" :key="index" class="answer">
+        <img :src="answer.image" @click="checkAnswer(answer)" />
       </div>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -26,33 +26,11 @@ export default {
 </script>
 
 <style scoped>
-
-h1{
-  margin-top: 5vh;
-}
-
-.question-popup {
-  margin-top: 10vh;
-  font-size: 1.563vw;
-  margin-left: 15vw;
-  height: 55vh;
-  width: 70%;
-  padding: 	1.042vw;
-  background: #f9f9f9;
-  border-radius: 	1.042vw;
-  box-shadow: 0 0 1.042vw rgba(0, 0, 0, 0.1);
-}
-
-.answers {
-  margin-top: 10vh;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
-
 .answer {
+  margin: 1.042vw;
+  display: inline-block;
+  transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
-  margin: 10px;
 }
 
 .answer img {
@@ -61,10 +39,37 @@ h1{
   object-fit: cover;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
+.answer:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
-  opacity: 0;
+
+.question-popup {
+  margin-top: 10vh;
+  font-size: 1.563vw;
+  margin-left: 15vw;
+  height: 55vh;
+  width: 70%;
+  padding: 1.042vw;
+  background: #f9f9f9;
+  border-radius: 1.042vw;
+  box-shadow: 0 0 1.042vw rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.question-container {
+  margin-top: 5vh;
+  width: 100%;
+  text-align: center;
+}
+
+.answers {
+  margin-top: 10vh;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  width: 100%;
 }
 </style>

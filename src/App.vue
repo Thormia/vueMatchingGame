@@ -21,14 +21,12 @@
     </div>
     <div v-else>
       <GameInformation :score="score" :lives="lives" :elapsedTime="elapsedTime" />
-      <transition name="fade">
-        <QuestionComponent
-          :key="currentQuestionIndex"
-          :question="currentQuestion.question"
-          :answers="answers"
-          @answer-selected="handleAnswer"
-        />
-      </transition>
+      <QuestionComponent
+        :key="currentQuestionIndex"
+        :question="currentQuestion.question"
+        :answers="answers"
+        @answer-selected="handleAnswer"
+      />
     </div>
   </div>
 </template>
@@ -211,14 +209,6 @@ export default {
   background-size: cover;
   height: 100vh;
   overflow: hidden;
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
-}
-
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
-  opacity: 0;
 }
 
 .restart{
