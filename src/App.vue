@@ -161,6 +161,8 @@ export default {
       this.lives = 3;
       this.gameOver = false;
       this.showAnswersMode = false;
+      this.backgroundAudio.play();
+      this.isMuted = !this.isMuted;
       this.elapsedTime = 0;
       this.questions = this.shuffle(this.questions);
       this.answers = [
@@ -192,7 +194,7 @@ export default {
     continueGame() {
       this.showMenu = false;
       this.startTimer();
-      if (!this.isMuted && this.userInteracted) {
+      if (!this.isMuted ) {
         this.backgroundAudio.play();
       }
     },
