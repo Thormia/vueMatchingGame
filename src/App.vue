@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- Game Menu -->
     <GameMenu 
       :isMuted="isMuted"
       :showMenu="showMenu"
@@ -8,17 +9,28 @@
       @restart-game="restartGame"
       @continue-game="continueGame"
     />
-    
+
+    <!-- Game Over and Show Answers -->
     <div v-if="gameOver">
-      <ResultComponent :score="score" :totalTime="totalTime" @restart-game="restartGame" @show-answers="showAnswers"/>
+      <ResultComponent 
+        :score="score" 
+        :totalTime="totalTime" 
+        @restart-game="restartGame" 
+        @show-answers="showAnswers" 
+      />
     </div>
-    <div v-else-if="showAnswersMode">
-      <div v-for="(question, index) in questions" :key="index" class="answer-display">
+    
+    <!-- Show Answers Mode -->
+    <div v-else-if="showAnswersMode" class="answers-container">
+      <h1>Answers</h1>
+      <div class="answer-display" v-for="(question, index) in questions" :key="index">
         <p>{{ question.question }}</p>
         <img :src="question.answer" />
       </div>
       <button class="restart" @click="restartGame">Restart</button>
     </div>
+
+    <!-- Game Play -->
     <div v-else>
       <GameInformation :score="score" :lives="lives" :elapsedTime="elapsedTime" />
       <QuestionComponent
@@ -239,9 +251,8 @@ export default {
   overflow: hidden;
 }
 
-.restart{
-  margin-left: 35vw;
-  margin-top: 10vh;
+.restart {
+  margin: 20px auto;
   display: block;
   width: 30vw;
   padding: 10px;
@@ -251,10 +262,27 @@ export default {
   cursor: pointer;
 }
 
+.answers-container {
+  margin: 15vh auto auto 10vw;
+  width: 80%;
+  height: 60vh;
+  overflow-y: scroll;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .answer-display {
-  margin: 1.042vw;
+  margin: 10px 0;
   display: flex;
-  display: inline-block;
+  flex-direction: column;
+  align-items: center;
+}
+
+.answer-display p {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
 .answer-display img {
