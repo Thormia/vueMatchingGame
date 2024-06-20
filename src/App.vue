@@ -4,7 +4,14 @@
     <button class="mute-btn" @click="toggleMute">{{ isMuted ? 'Unmute' : 'Mute' }}</button>
 
     <div v-if="gameOver">
-      <ResultComponent :score="score" :totalTime="totalTime" @restart-game="restartGame"/>
+      <ResultComponent :score="score" :totalTime="totalTime" @restart-game="restartGame" @show-answers="showAnswers"/>
+    </div>
+    <div v-else-if="showAnswersMode">
+      <div v-for="(question, index) in questions" :key="index" class="answer-display">
+        <p>{{ question.question }}</p>
+        <img :src="question.answer" />
+      </div>
+      <button class="restart" @click="restartGame">Restart</button>
     </div>
     <div v-else>
       <transition name="fade">
@@ -32,6 +39,9 @@
 <script>
 import QuestionComponent from './components/QuestionComponent.vue'
 import ResultComponent from './components/ResultComponent.vue'
+import correctSound from './assets/correct.mp3'
+import wrongSound from './assets/wrong.mp3'
+import backgroundSound from './assets/background.mp3'
 
 export default {
   name: 'App',
@@ -59,12 +69,15 @@ export default {
       score: 0,
       lives: 3,
       gameOver: false,
+      showAnswersMode: false,
       startTime: null,
       elapsedTime: 0,
       timer: null,
       showMenu: false,
       isMuted: false,
-      backgroundAudio: null
+      backgroundAudio: null,
+      correctAudio: null,
+      wrongAudio: null
     }
   },
   computed: {
@@ -89,8 +102,14 @@ export default {
       if (selectedAnswer.image === this.currentQuestion.answer) {
         this.score++;
         this.answers = this.answers.filter(answer => answer.image !== selectedAnswer.image);
+        if (!this.isMuted) {
+          this.correctAudio.play();
+        }
       } else {
         this.lives--;
+        if (!this.isMuted) {
+          this.wrongAudio.play();
+        }
       }
       
       this.currentQuestionIndex++;
@@ -105,6 +124,7 @@ export default {
       this.score = 0;
       this.lives = 3;
       this.gameOver = false;
+      this.showAnswersMode = false;
       this.elapsedTime = 0;
       this.answers = [
         { image: require('./assets/cat.jpg') },
@@ -115,18 +135,28 @@ export default {
       ];
       this.startTimer();
       this.showMenu = false;
+      if (!this.isMuted) {
+        this.backgroundAudio.play();
+      }
     },
     toggleMenu() {
       this.showMenu = !this.showMenu;
       if (this.showMenu) {
         this.stopTimer();
+        this.backgroundAudio.pause();
       } else {
         this.startTimer();
+        if (!this.isMuted) {
+          this.backgroundAudio.play();
+        }
       }
     },
     continueGame() {
       this.showMenu = false;
       this.startTimer();
+      if (!this.isMuted) {
+        this.backgroundAudio.play();
+      }
     },
     toggleMute() {
       this.isMuted = !this.isMuted;
@@ -135,12 +165,20 @@ export default {
       } else {
         this.backgroundAudio.play();
       }
+    },
+    showAnswers() {
+      this.gameOver = false;
+      this.showAnswersMode = true;
     }
   },
   mounted() {
     this.startTimer();
-    this.backgroundAudio = new Audio(require('./assets/background.mp3'));
+    this.backgroundAudio = new Audio(backgroundSound);
     this.backgroundAudio.loop = true;
+
+    this.correctAudio = new Audio(correctSound);
+    this.wrongAudio = new Audio(wrongSound);
+
     if (!this.isMuted) {
       this.backgroundAudio.play();
     }
@@ -152,7 +190,7 @@ export default {
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
-  background: url('./assets/background.jpg') no-repeat center center fixed;
+  background: url('./assets/background.png') no-repeat center center fixed;
   background-size: cover;
   height: 100vh;
   overflow: hidden;
@@ -188,6 +226,18 @@ export default {
   right: 10px;
 }
 
+.restart{
+  margin-left: 35vw;
+  margin-top: 10vh;
+  display: block;
+  width: 30vw;
+  padding: 10px;
+  border: none;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
 .menu-popup {
   position: fixed;
   top: 50%;
@@ -211,5 +261,17 @@ export default {
   background: #333;
   color: #fff;
   cursor: pointer;
+}
+
+.answer-display {
+  margin: 1.042vw;
+  display: flex;
+  display: inline-block;
+}
+
+.answer-display img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
 }
 </style>

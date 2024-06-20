@@ -4,6 +4,7 @@
     <p>Your score: {{ score }}</p>
     <p>Total time: {{ totalTime }} seconds</p>
     <button @click="restartGame">Restart</button>
+    <button @click="showAnswers">Show Answers</button>
   </div>
 </template>
 
@@ -16,6 +17,9 @@ export default {
   methods: {
     restartGame() {
       this.$emit('restart-game');
+    },
+    showAnswers() {
+      this.$emit('show-answers');
     }
   }
 }
