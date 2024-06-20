@@ -1,8 +1,14 @@
 <template>
   <div id="app">
-    <button class="menu-btn" @click="handleInteraction">Menu</button>
-    <button class="mute-btn" @click="toggleMute">{{ isMuted ? 'Unmute' : 'Mute' }}</button>
-
+    <GameMenu 
+      :isMuted="isMuted"
+      :showMenu="showMenu"
+      @toggle-menu="toggleMenu"
+      @toggle-mute="toggleMute"
+      @restart-game="restartGame"
+      @continue-game="continueGame"
+    />
+    
     <div v-if="gameOver">
       <ResultComponent :score="score" :totalTime="totalTime" @restart-game="restartGame" @show-answers="showAnswers"/>
     </div>
@@ -14,11 +20,7 @@
       <button class="restart" @click="restartGame">Restart</button>
     </div>
     <div v-else>
-      <div class="info">
-        <p>Score: {{ score }}</p>
-        <p>Lives: {{ lives }}</p>
-        <p>Time: {{ elapsedTime }} seconds</p>
-      </div>
+      <GameInformation :score="score" :lives="lives" :elapsedTime="elapsedTime" />
       <transition name="fade">
         <QuestionComponent
           :key="currentQuestionIndex"
@@ -28,26 +30,25 @@
         />
       </transition>
     </div>
-
-    <div v-if="showMenu" class="menu-popup">
-      <button @click="restartGame">Start Again</button>
-      <button @click="continueGame">Continue Playing</button>
-    </div>
   </div>
 </template>
 
 <script>
-import QuestionComponent from './components/QuestionComponent.vue'
-import ResultComponent from './components/ResultComponent.vue'
-import correctSound from './assets/correct.mp3'
-import wrongSound from './assets/wrong.mp3'
-import backgroundSound from './assets/background.mp3'
+import QuestionComponent from './components/QuestionComponent.vue';
+import ResultComponent from './components/ResultComponent.vue';
+import GameMenu from './components/GameMenu.vue';
+import GameInformation from './components/GameInformation.vue';
+import correctSound from './assets/correct.mp3';
+import wrongSound from './assets/wrong.mp3';
+import backgroundSound from './assets/background.mp3';
 
 export default {
   name: 'App',
   components: {
     QuestionComponent,
-    ResultComponent
+    ResultComponent,
+    GameMenu,
+    GameInformation
   },
   data() {
     return {
@@ -79,7 +80,7 @@ export default {
       correctAudio: null,
       wrongAudio: null,
       userInteracted: false
-    }
+    };
   },
   computed: {
     currentQuestion() {
@@ -212,10 +213,6 @@ export default {
   overflow: hidden;
 }
 
-.info {
-  margin-top: 10vh;
-}
-
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s;
 }
@@ -224,54 +221,11 @@ export default {
   opacity: 0;
 }
 
-.menu-btn, .mute-btn {
-  position: absolute;
-  top: 10px;
-  padding: 10px;
-  border: none;
-  background: #333;
-  color: #fff;
-  cursor: pointer;
-}
-
-.menu-btn {
-  left: 10px;
-}
-
-.mute-btn {
-  right: 10px;
-}
-
 .restart{
   margin-left: 35vw;
   margin-top: 10vh;
   display: block;
   width: 30vw;
-  padding: 10px;
-  border: none;
-  background: #333;
-  color: #fff;
-  cursor: pointer;
-}
-
-.menu-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 20vw;
-  height: 20vh;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.menu-popup button {
-  margin: 10px;
   padding: 10px;
   border: none;
   background: #333;
