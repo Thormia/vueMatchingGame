@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <button class="menu-btn" @click="toggleMenu">Menu</button>
+    <button class="menu-btn" @click="handleInteraction">Menu</button>
     <button class="mute-btn" @click="toggleMute">{{ isMuted ? 'Unmute' : 'Mute' }}</button>
 
     <div v-if="gameOver">
@@ -14,6 +14,11 @@
       <button class="restart" @click="restartGame">Restart</button>
     </div>
     <div v-else>
+      <div class="info">
+        <p>Score: {{ score }}</p>
+        <p>Lives: {{ lives }}</p>
+        <p>Time: {{ elapsedTime }} seconds</p>
+      </div>
       <transition name="fade">
         <QuestionComponent
           :key="currentQuestionIndex"
@@ -22,11 +27,6 @@
           @answer-selected="handleAnswer"
         />
       </transition>
-      <div class="info">
-        <p>Score: {{ score }}</p>
-        <p>Lives: {{ lives }}</p>
-        <p>Time: {{ elapsedTime }} seconds</p>
-      </div>
     </div>
 
     <div v-if="showMenu" class="menu-popup">
@@ -74,10 +74,11 @@ export default {
       elapsedTime: 0,
       timer: null,
       showMenu: false,
-      isMuted: false,
+      isMuted: true,
       backgroundAudio: null,
       correctAudio: null,
-      wrongAudio: null
+      wrongAudio: null,
+      userInteracted: false
     }
   },
   computed: {
@@ -135,7 +136,7 @@ export default {
       ];
       this.startTimer();
       this.showMenu = false;
-      if (!this.isMuted) {
+      if (!this.isMuted && this.userInteracted) {
         this.backgroundAudio.play();
       }
     },
@@ -146,7 +147,7 @@ export default {
         this.backgroundAudio.pause();
       } else {
         this.startTimer();
-        if (!this.isMuted) {
+        if (!this.isMuted && this.userInteracted) {
           this.backgroundAudio.play();
         }
       }
@@ -154,7 +155,7 @@ export default {
     continueGame() {
       this.showMenu = false;
       this.startTimer();
-      if (!this.isMuted) {
+      if (!this.isMuted && this.userInteracted) {
         this.backgroundAudio.play();
       }
     },
@@ -169,24 +170,39 @@ export default {
     showAnswers() {
       this.gameOver = false;
       this.showAnswersMode = true;
+    },
+    handleInteraction() {
+      this.userInteracted = true;
+      this.toggleMenu();
+      if (!this.isMuted) {
+        this.backgroundAudio.play();
+      }
     }
   },
   mounted() {
     this.startTimer();
+    
     this.backgroundAudio = new Audio(backgroundSound);
     this.backgroundAudio.loop = true;
 
     this.correctAudio = new Audio(correctSound);
     this.wrongAudio = new Audio(wrongSound);
 
-    if (!this.isMuted) {
-      this.backgroundAudio.play();
-    }
+    this.backgroundAudio.addEventListener('error', (e) => {
+      console.error('Error loading background audio:', e);
+    });
+
+    this.backgroundAudio.load();
   }
 }
 </script>
 
 <style>
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Lucida Console", Courier, monospace;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
@@ -197,7 +213,7 @@ export default {
 }
 
 .info {
-  margin-top: 20px;
+  margin-top: 10vh;
 }
 
 .fade-enter-active, .fade-leave-active {

@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div class="question-popup" v-if="question">
-      <h2>{{ question }}</h2>
+      <h1>{{ question }}</h1>
       <div class="answers">
         <div v-for="(answer, index) in answers" :key="index" class="answer">
           <img :src="answer.image" @click="checkAnswer(answer)" />
@@ -26,16 +26,25 @@ export default {
 </script>
 
 <style scoped>
+
+h1{
+  margin-top: 5vh;
+}
+
 .question-popup {
+  margin-top: 10vh;
+  font-size: 1.563vw;
+  margin-left: 15vw;
+  height: 55vh;
   width: 70%;
-  margin: auto;
-  padding: 20px;
+  padding: 	1.042vw;
   background: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 	1.042vw;
+  box-shadow: 0 0 1.042vw rgba(0, 0, 0, 0.1);
 }
 
 .answers {
+  margin-top: 10vh;
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
@@ -47,8 +56,8 @@ export default {
 }
 
 .answer img {
-  width: 150px;
-  height: 150px;
+  width: 19vh;
+  height: 19vh;
   object-fit: cover;
 }
 
