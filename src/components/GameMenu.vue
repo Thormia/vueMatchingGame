@@ -1,12 +1,20 @@
 <template>
   <div>
+    <!-- Menu Button -->
     <button class="menu-btn" @click="toggleMenu">Menu</button>
+    
+    <!-- Mute Button -->
     <button class="mute-btn" @click="toggleMute">{{ isMuted ? 'Unmute' : 'Mute' }}</button>
 
-    <div v-if="showMenu" class="menu-popup">
-      <button @click="restartGame">Start Again</button>
-      <button @click="continueGame">Continue Playing</button>
-    </div>
+    <!-- Menu Popup -->
+    <transition name="menu-fade">
+      <div v-if="showMenu" class="menu-overlay">
+        <div class="menu-popup">
+          <button @click="restartGame">Start Again</button>
+          <button @click="continueGame">Continue Playing</button>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -43,6 +51,7 @@ export default {
   background: #333;
   color: #fff;
   cursor: pointer;
+  z-index: 100; /* Ensure buttons are above other content */
 }
 
 .menu-btn {
@@ -53,13 +62,22 @@ export default {
   right: 10px;
 }
 
-.menu-popup {
+.menu-overlay {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99; 
+}
+
+.menu-popup {
   width: 20vw;
   height: 20vh;
-  transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.9);
   display: flex;
   flex-direction: column;
@@ -76,5 +94,13 @@ export default {
   background: #333;
   color: #fff;
   cursor: pointer;
+}
+
+.menu-fade-enter-active, .menu-fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.menu-fade-enter, .menu-fade-leave-to {
+  opacity: 0;
 }
 </style>
