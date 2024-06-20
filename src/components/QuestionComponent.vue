@@ -1,8 +1,6 @@
 <template>
   <div class="question-popup">
-    <div class="question-container">
-      <h1 v-if="question">{{ question }}</h1>
-    </div>
+    <h1 class="question-text" v-if="question">{{ question }}</h1>
     <div class="answers" v-if="question">
       <div v-for="(answer, index) in answers" :key="index" class="answer" @click="checkAnswer(answer)">
         <img :src="answer.image" />
@@ -81,17 +79,24 @@ export default {
   align-items: center;
 }
 
-.question-container {
+.question-text {
+  margin-bottom: 10vh;
   margin-top: 5vh;
-  width: 100%;
-  text-align: center;
+  font-weight: bold;
+  font-size: large;
+  font-size: 2rem; 
+  opacity: 0; 
+  animation: slide-in 1s ease-out forwards; 
 }
 
-.answers {
-  margin-top: 10vh;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  width: 100%;
+@keyframes slide-in {
+  from {
+    transform: translateX(50px); 
+    opacity: 0; 
+  }
+  to {
+    transform: translateX(0); 
+    opacity: 1; 
+  }
 }
 </style>
