@@ -4,8 +4,9 @@
       <h1 v-if="question">{{ question }}</h1>
     </div>
     <div class="answers" v-if="question">
-      <div v-for="(answer, index) in answers" :key="index" class="answer">
-        <img :src="answer.image" @click="checkAnswer(answer)" />
+      <div v-for="(answer, index) in answers" :key="index" class="answer" @click="checkAnswer(answer)">
+        <img :src="answer.image" />
+        <div class="overlay" :class="{ correct: answer.correct, wrong: answer.wrong }" v-if="answer.checked"></div>
       </div>
     </div>
   </div>
@@ -27,6 +28,7 @@ export default {
 
 <style scoped>
 .answer {
+  position: relative;
   margin: 1.042vw;
   display: inline-block;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -42,6 +44,26 @@ export default {
 .answer:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlay.correct {
+  background-color: rgba(0, 255, 0, 0.5);
+}
+
+.overlay.wrong {
+  background-color: rgba(255, 0, 0, 0.5);
 }
 
 .question-popup {

@@ -99,21 +99,35 @@ export default {
       clearInterval(this.timer);
     },
     handleAnswer(selectedAnswer) {
+      selectedAnswer.checked = true;
       if (selectedAnswer.image === this.currentQuestion.answer) {
         this.score++;
-        this.answers = this.answers.filter(answer => answer.image !== selectedAnswer.image);
+        selectedAnswer.correct = true;
         if (!this.isMuted) {
           this.correctAudio.play();
         }
+        setTimeout(() => {
+          this.answers = this.answers.filter(answer => answer.image !== selectedAnswer.image);
+          this.moveToNextQuestion();
+        }, 1000);
       } else {
         this.lives--;
+        selectedAnswer.wrong = true;
         if (!this.isMuted) {
           this.wrongAudio.play();
         }
+        setTimeout(() => {
+          this.moveToNextQuestion();
+        }, 1000);
       }
-      
+    },
+    moveToNextQuestion() {
       this.currentQuestionIndex++;
-
+      this.answers.forEach(answer => {
+        answer.checked = false;
+        answer.correct = false;
+        answer.wrong = false;
+      });
       if (this.lives <= 0 || this.currentQuestionIndex >= this.questions.length) {
         this.stopTimer();
         this.gameOver = true;
