@@ -24,7 +24,7 @@
       <QuestionComponent
         :key="currentQuestionIndex"
         :question="currentQuestion.question"
-        :answers="answers"
+        :answers="currentAnswers"
         @answer-selected="handleAnswer"
       />
     </div>
@@ -84,11 +84,21 @@ export default {
     currentQuestion() {
       return this.questions[this.currentQuestionIndex];
     },
+    currentAnswers() {
+      return this.answers;
+    },
     totalTime() {
       return this.elapsedTime;
     }
   },
   methods: {
+    shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    },
     startTimer() {
       this.startTime = Date.now() - this.elapsedTime * 1000;
       this.timer = setInterval(() => {
@@ -140,6 +150,7 @@ export default {
       this.gameOver = false;
       this.showAnswersMode = false;
       this.elapsedTime = 0;
+      this.questions = this.shuffle(this.questions);
       this.answers = [
         { image: require('./assets/cat.jpg') },
         { image: require('./assets/dog.jpg') },
@@ -147,6 +158,7 @@ export default {
         { image: require('./assets/capy.jpg') },
         { image: require('./assets/rabbit.jpg') }
       ];
+      this.answers = this.shuffle(this.answers);
       this.startTimer();
       this.showMenu = false;
       if (!this.isMuted && this.userInteracted) {
@@ -194,6 +206,8 @@ export default {
   },
   mounted() {
     this.startTimer();
+    this.questions = this.shuffle(this.questions);
+    this.answers = this.shuffle(this.answers);
     
     this.backgroundAudio = new Audio(backgroundSound);
     this.backgroundAudio.loop = true;
